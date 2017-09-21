@@ -1,31 +1,32 @@
-﻿var cheerio=require('cheerio');
+﻿var cheerio=require('cheerio');//爬虫插件
 var http=require("http");
-var iconv=require("iconv-lite");
-var async=require("async");
+var iconv=require("iconv-lite");//处理html的dom
+var async=require("async");//异步流
 
-var url="http://www.jianshu.com/";
+var url="http://www.jianshu.com/";//简书的地址
 
-var mysqlclient=require("./util/MySQLClient.js");
+var mysqlclient=require("./util/MySQLClient.js");//自己封装的mysql
 
 var mysqlObj=new mysqlclient();
+
 /**
 * 功能：链接数据库并且保存数据
 */
 function saveData(data,callback){
+	//使用waterfall的意思是把上一个方法的的结果传递到下一个方法中当参数
 	async.waterfall([
 		function(callback){
-			var str = data.wrapimg;
-			
+			var str = data.wrapimg;//获取的文章的封面图（有可能没有封面）
 			if(str){
 				var wrapimgarr = str.match(/\/\/upload-images.jianshu.io\S*?"/);
-				callback(null, wrapimgarr[0]);
+				callback(null, wrapimgarr[0]);//传递参数
 			}else{
 				callback(null, str);
 			}
 			
 		},
 		function(arg1, callback){
-		  // arg1 now equals 'one' and arg2 now equals 'two'
+		  	//添加到个人表中
 			mysqlObj.exec(
 				'insert into info_user (username,avatar) values(?,?)',
 				[
@@ -42,13 +43,9 @@ function saveData(data,callback){
 			);
 		}
 	], function (err, result) {
-	   // result now equals 'done'
-	   console.log(result);
+	   // 执行回调函数
+	   callback(result);
 	});
-
-
-	
-	
 }
 
 /**
@@ -66,8 +63,8 @@ function getDom(url,callback){
 	  // 剩下就都是 jQuery 的内容了
 	  sres.on('end', function() {
 	    var titles = [];
-	    //由于咱们发现此网页的编码格式为gb2312，所以需要对其进行转码，否则乱码
-	    //依据：“<meta http-equiv="Content-Type" content="text/html; charset=gb2312">”
+	    //由于咱们发现此网页的编码格式为utf-8，所以需要对其进行转码，否则乱码
+	    //依据：“<meta http-equiv="Content-Type" content="text/html; charset=utf-8">”
 	    var html = iconv.decode(Buffer.concat(chunks), 'utf-8');
 	    $=cheerio.load(html, {decodeEntities: false});   
 	    $('#list-container').find("ul.note-list").children("li").each(function (i, n) {
