@@ -1,4 +1,4 @@
-var cheerio=require('cheerio');
+﻿var cheerio=require('cheerio');
 var http=require("http");
 var iconv=require("iconv-lite");
 var async=require("async");
@@ -8,7 +8,6 @@ var url="http://www.jianshu.com/";
 var mysqlclient=require("./util/MySQLClient.js");
 
 var mysqlObj=new mysqlclient();
-
 /**
 * 功能：链接数据库并且保存数据
 */
