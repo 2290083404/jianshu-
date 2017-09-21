@@ -1,4 +1,4 @@
-/**
+﻿/**
  * mysql的帮助工具
  *
  * @author 792793182@qq.com 2016-01-03.
@@ -6,7 +6,7 @@
 
 var mysql=require('mysql');
 var dbconfig=require("../config/db.js");
-var userSql=require("../config/userSqlMapping.js");
+
 
 
 function MySQLClient() {
